@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Scripting;
 
 namespace Gameframe.PostProcessing
 {
@@ -19,6 +20,7 @@ namespace Gameframe.PostProcessing
     public BoolParameter smallKernelSize = new BoolParameter { value = false };
   }
  
+  [Preserve]
   public sealed class TiltShiftRenderer : PostProcessEffectRenderer<TiltShift>
   {
     public override void Render(PostProcessRenderContext context)
