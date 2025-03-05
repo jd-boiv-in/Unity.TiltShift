@@ -95,7 +95,7 @@
         for(int l=0; l<NumDiscSamples; l++)
         {
             float2 sampleUV = UnityStereoScreenSpaceUVAdjust(i.texcoord + DiscKernel[l].xy * poissonScale.xy, _MainTex_ST);
-            float4 sample0 =  _MainTex.Sample(sampler_MainTex,sampleUV.xy);
+        	float4 sample0 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, sampleUV.xy);
             sum += sample0;
         }
     	
@@ -121,7 +121,7 @@
         for(int l=0; l<SmallDiscKernelSamples; l++)
         {
             float2 sampleUV = UnityStereoScreenSpaceUVAdjust(i.texcoord + SmallDiscKernel[l].xy * poissonScale.xy, _MainTex_ST);
-            float4 sample0 =  _MainTex.Sample(sampler_MainTex,sampleUV.xy);
+            float4 sample0 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, sampleUV.xy);
             sum += sample0;
         }
     	
