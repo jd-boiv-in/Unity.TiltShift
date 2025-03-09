@@ -1,6 +1,6 @@
 # Unity.TiltShift
 
-This package contains a TiltShift effect for Unity's post processing stack and may be the home of additional effects if I create any.
+This package contains a TiltShift effect for Unity's post processing stack.
 
 ## Installation
 
