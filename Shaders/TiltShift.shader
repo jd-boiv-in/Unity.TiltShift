@@ -1,4 +1,4 @@
-﻿Shader "Hidden/Gameframe/PostFX/TiltShift"
+﻿Shader "Hidden/PostFX/TiltShift"
 {
     HLSLINCLUDE
 
@@ -65,23 +65,24 @@
 	};	
 
     float WeightFieldMode (float2 uv)
-	{
-		float2 tapCoord = uv*2.0-1.0;
-		return (abs(tapCoord.y * _BlurArea));
-	}
-	
-	float WeightIrisMode (float2 uv)
-	{
-		float2 tapCoord = (uv*2.0-1.0);
-		return dot(tapCoord, tapCoord) * _BlurArea;
-	}
+    {
+        float2 tapCoord = uv*2.0-1.0;
+        return (abs(tapCoord.y * _BlurArea * (_MainTex_TexelSize.w / 1080.0)));
+    }
+    
+    float WeightIrisMode (float2 uv)
+    {
+        float2 tapCoord = (uv*2.0-1.0);
+        return dot(tapCoord, tapCoord) * _BlurArea * (_MainTex_TexelSize.w / 1080.0);
+    }
     
     float4 FragField (VaryingsDefault i) : SV_Target 
     {
         float4 centerTap = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
         float4 sum = centerTap;
 
-        float w = clamp(WeightFieldMode(i.texcoord + _Offset), 0, _BlurSize);
+        // Normalize the offset and blur size based on the texel size
+        float w = clamp(WeightFieldMode(i.texcoord + _Offset), 0, _BlurSize * (_MainTex_TexelSize.w / 1080.0));
 
         float4 poissonScale = _MainTex_TexelSize.xyxy * w;
         
@@ -90,12 +91,14 @@
             return sum;
         #endif
 
+    	[unroll]
         for(int l=0; l<NumDiscSamples; l++)
         {
             float2 sampleUV = UnityStereoScreenSpaceUVAdjust(i.texcoord + DiscKernel[l].xy * poissonScale.xy, _MainTex_ST);
-            float4 sample0 =  _MainTex.Sample(sampler_MainTex,sampleUV.xy);
+        	float4 sample0 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, sampleUV.xy);
             sum += sample0;
         }
+    	
         return float4(sum.rgb / (1.0 + NumDiscSamples), w);	
     }
     
@@ -104,7 +107,8 @@
         float4 centerTap = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
         float4 sum = centerTap;
 
-        float w = clamp(WeightFieldMode(i.texcoord + _Offset), 0, _BlurSize);
+        // Normalize the offset and blur size based on the texel size
+        float w = clamp(WeightFieldMode(i.texcoord + _Offset), 0, _BlurSize * (_MainTex_TexelSize.w / 1080.0));
 
         float4 poissonScale = _MainTex_TexelSize.xyxy * w;
         
@@ -113,12 +117,14 @@
             return sum;
         #endif
 
+    	[unroll]
         for(int l=0; l<SmallDiscKernelSamples; l++)
         {
             float2 sampleUV = UnityStereoScreenSpaceUVAdjust(i.texcoord + SmallDiscKernel[l].xy * poissonScale.xy, _MainTex_ST);
-            float4 sample0 =  _MainTex.Sample(sampler_MainTex,sampleUV.xy);
+            float4 sample0 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, sampleUV.xy);
             sum += sample0;
         }
+    	
         return float4(sum.rgb / (1.0 + SmallDiscKernelSamples), w);	
     }
     
