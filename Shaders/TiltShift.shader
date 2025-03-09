@@ -1,4 +1,4 @@
-﻿Shader "Hidden/Gameframe/PostFX/TiltShift"
+﻿Shader "Hidden/PostFX/TiltShift"
 {
     HLSLINCLUDE
 
