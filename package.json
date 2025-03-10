@@ -5,6 +5,7 @@
   "description": "Tilt Shift effect for the post processing stack",
   "unity": "2019.1",
   "unityRelease": "",
+  "license": "MIT",
   "keywords": [],
   "author": {
     "name": "Cory Leach",
